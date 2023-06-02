@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  background-color: #111;
+  font-family: questrial, sans-serif;
+  color: #fff;
+}
+
+pre {
+  font-size: 24px;
+  white-space: pre;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+</style>
+<script>
+function sendData() {
+  const variables = {
+    screenHeight: window.screen.height,
+    screenWidth: window.screen.width,
+    browserLanguage: (navigator.language || navigator.userLanguage).toLowerCase(),
+    colorMode: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezoneOffset: new Date().getTimezoneOffset(),
+    devicePixelRatio: window.devicePixelRatio,
+    cookieEnabled: navigator.cookieEnabled,
+    operatingSystem: navigator.platform,
+    currentTime: new Date().toLocaleString(),
+    unixTime: Math.floor(Date.now() / 1000),
+    isFullscreen: window.innerHeight === screen.height && window.innerWidth === screen.width,
+    screenRotation: window.orientation || screen.orientation.angle,
+    windowRatio: window.innerWidth / window.innerHeight,
+    screenRatio: screen.width / screen.height,
+    screenPixelRatio: window.devicePixelRatio,
+    windowProperties: `${window.innerWidth}x${window.innerHeight}`,
+    screenOrientation: screen.orientation.type || '',
+    availableBrowserMemory: navigator.deviceMemory || '',
+    cursorPosition: { x: undefined, y: undefined },
+    networkConnection: {
+      type: navigator.connection ? capitalizeFirstLetter(navigator.connection.effectiveType) : 'Not available',
+      downlink: navigator.connection ? navigator.connection.downlink : '',
+      rtt: navigator.connection ? navigator.connection.rtt : ''
+    },
+    plugins: Array.from(navigator.plugins).map(plugin => plugin.name),
+    screenDPI: getScreenDPI()
+  };
+
+  fetch('http://localhost:3000/store', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(variables),
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error(error));
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function getScreenDPI() {
+  const inchSize = 1;
+  const dpi = Math.sqrt(screen.width * screen.width + screen.height * screen.height) / inchSize;
+  return dpi.toFixed(2);
+}
+
+window.onload = sendData;
+</script>
+</head>
+<body>
+</body>
+</html>
