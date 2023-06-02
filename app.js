@@ -1,3 +1,13 @@
+const { exec } = require('child_process');
+exec('npm install express', (error, stdout, stderr) => {
+  if (error) {
+    console.error(`Error installing Express: ${error.message}`);
+    return;
+  }
+  if (stderr) {
+    console.error(`npm error: ${stderr}`);
+    return;
+  }
 const express = require('express');
 const fs = require('fs');
 const app = express();
